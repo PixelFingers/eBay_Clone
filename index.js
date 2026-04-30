@@ -366,8 +366,8 @@ app.post("/order/place", async (req, res) => {
         const savedOrder = await newOrder.save()
 
         const emailHTML = `
-        <h2>Order Confirmed ✅</h2>
-        <p>Hello ${savedOrder.customerName},</p>
+        <h2>Order Confirmed</h2>
+        <p>Hello <b>${savedOrder.customerName} </b>,</p>
         <p>Your order has been placed successfully.</p>
         <p><b>Order ID:</b> ${savedOrder._id}</p>
         <p><b>Total:</b> $${savedOrder.totalAmount}</p>
