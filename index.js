@@ -363,22 +363,23 @@ app.post("/order/place", async (req, res) => {
             paymentId,
             paymentStatus
         })
-
         const savedOrder = await newOrder.save()
 
-        const html = `
-            <h2>Order placed successfully</h2>
-            <p>Hello ${savedOrder.customerName}</p>
-            <p>Order ID: ${savedOrder._id}</p>
-            <p>Total: $${savedOrder.totalAmount}</p>
+        const emailHTML = `
+        <h2>Order Confirmed ✅</h2>
+        <p>Hello ${savedOrder.customerName},</p>
+        <p>Your order has been placed successfully.</p>
+        <p><b>Order ID:</b> ${savedOrder._id}</p>
+        <p><b>Total:</b> $${savedOrder.totalAmount}</p>
         `
-
-        try {
-            await sendMail(savedOrder.email, "Order Confirmation", html)
-            console.log("MAIL SENT")
-        } catch (err) {
-            console.log("MAIL ERROR:", err)
-        }
+        const invoiceTemplate = invoiceHTML(savedOrder)
+        const pdfBuffer = await generatePDF(invoiceTemplate)
+        await sendMail(
+        savedOrder.email,
+        "Order Confirmation",
+        emailHTML,
+        pdfBuffer   
+        )
 
         if (!req.body.buyNowItem) {
             await cartsModel.findOneAndDelete({ userId })
