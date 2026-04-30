@@ -20,5 +20,4 @@ const generatePDF = async (html) => {
     return null
   }
 }
-
 module.exports = generatePDF
