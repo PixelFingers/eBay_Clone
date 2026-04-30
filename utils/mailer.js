@@ -11,7 +11,7 @@ const sendMail = async (to, subject, html, pdfBuffer) => {
             html,
             attachments: pdfBuffer ? [
                 {
-                    content: pdfBuffer.toString("base64"),
+                    content: Buffer.from(pdfBuffer).toString("base64"),
                     filename: "invoice.pdf",
                     type: "application/pdf",
                     disposition: "attachment"

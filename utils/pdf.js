@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer-core")
 const chromium = require("@sparticuz/chromium")
+
 const generatePDF = async (html) => {
   try {
     const browser = await puppeteer.launch({
@@ -7,6 +8,7 @@ const generatePDF = async (html) => {
       executablePath: await chromium.executablePath(),
       headless: chromium.headless
     })
+
     const page = await browser.newPage()
     await page.setContent(html, { waitUntil: "networkidle0" })
 
@@ -20,4 +22,5 @@ const generatePDF = async (html) => {
     return null
   }
 }
+
 module.exports = generatePDF

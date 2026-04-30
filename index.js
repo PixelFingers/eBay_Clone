@@ -374,6 +374,7 @@ app.post("/order/place", async (req, res) => {
         `
         const invoiceTemplate = invoiceHTML(savedOrder)
         const pdfBuffer = await generatePDF(invoiceTemplate)
+        console.log("PDF BUFFER:", pdfBuffer ? "OK" : "FAILED")
         await sendMail(
         savedOrder.email,
         "Order Confirmation",
