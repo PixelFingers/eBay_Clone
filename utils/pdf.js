@@ -1,21 +1,16 @@
-const puppeteer = require("puppeteer-core")
-const chromium = require("chrome-aws-lambda")
+const puppeteer = require("puppeteer")
 
 const generatePDF = async (html) => {
   try {
     const browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
     })
 
     const page = await browser.newPage()
     await page.setContent(html, { waitUntil: "networkidle0" })
 
-    const pdf = await page.pdf({
-      format: "A4",
-      printBackground: true
-    })
+    const pdf = await page.pdf({ format: "A4" })
 
     await browser.close()
     return pdf
