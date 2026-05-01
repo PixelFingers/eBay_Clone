@@ -127,9 +127,7 @@ app.post("/admin/addproduct", upload.array("images",10), async (req,res)=>{
             GST: gstValue,
             images: imageUrls
         })
-
         await newProduct.save()
-
         res.json("Product Added")
 
     }catch(err){
@@ -311,7 +309,8 @@ app.post("/order/place", async (req, res) => {
                 Price: p.Price,
                 quantity: p.quantity,
                 Category: p.Category,
-                GST: p.GST
+                GST: p.GST,
+                image:  p.image
             }]
         } else {
             const cart = await cartsModel.findOne({ userId })
@@ -327,7 +326,8 @@ app.post("/order/place", async (req, res) => {
                         Price: product.Price,
                         quantity: item.quantity,
                         Category: product.Category,
-                        GST: product.GST 
+                        GST: product.GST ,
+                        image: product.images[0]
                     }
                 })
             )
@@ -364,23 +364,35 @@ app.post("/order/place", async (req, res) => {
             paymentStatus
         })
         const savedOrder = await newOrder.save()
-
-        const emailHTML = `
-        <h2>Order Confirmed</h2>
-        <p>Hello <b>${savedOrder.customerName} </b>,</p>
-        <p>Your order has been placed successfully.</p>
-        <p><b>Order ID:</b> ${savedOrder._id}</p>
-        <p><b>Total:</b> $${savedOrder.totalAmount}</p>
-        `
         const invoiceTemplate = invoiceHTML(savedOrder)
         const pdfBuffer = await generatePDF(invoiceTemplate)
         console.log("PDF BUFFER:", pdfBuffer ? "OK" : "FAILED")
         await sendMail(
-        savedOrder.email,
-        "Order Confirmation",
-        emailHTML,
-        pdfBuffer   
-        )
+            savedOrder.email,
+            {
+                orderId: savedOrder._id,
+                date: new Date(savedOrder.createdAt).toLocaleDateString(),
+                name: savedOrder.customerName,
+                email: savedOrder.email,
+                address: savedOrder.address,
+
+                products: savedOrder.products.map(p => ({
+                ProductName: p.ProductName,
+                quantity: p.quantity,
+                itemTotal: (p.Price * p.quantity).toFixed(2),
+                image: p.image
+                })),
+                totalprices: (
+                savedOrder.totalAmount -
+                savedOrder.gstAmount -
+                savedOrder.shippingAmount
+                ).toFixed(2),
+                gst: savedOrder.gstAmount.toFixed(2),
+                shipping: savedOrder.shippingAmount.toFixed(2),
+                total: savedOrder.totalAmount.toFixed(2)
+            },
+            pdfBuffer
+            )
 
         if (!req.body.buyNowItem) {
             await cartsModel.findOneAndDelete({ userId })

@@ -11,6 +11,7 @@ const ordersSchema = new mongoose.Schema({
             quantity: Number,
             GST: Number,
             Category:String,
+            image: String
         }
     ],
     shippingAmount: Number,

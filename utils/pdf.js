@@ -8,15 +8,12 @@ const generatePDF = async (html) => {
       executablePath: await chromium.executablePath(),
       headless: chromium.headless
     })
-
     const page = await browser.newPage()
     await page.setContent(html, { waitUntil: "networkidle0" })
-
     const pdf = await page.pdf({ format: "A4" })
-
     await browser.close()
     return pdf
-
+    
   } catch (err) {
     console.log("PDF ERROR:", err.message)
     return null
