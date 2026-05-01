@@ -1,3 +1,7 @@
+const sgMail = require("@sendgrid/mail")
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
 const sendMail = async (to, data, pdfBuffer) => {
   try {
     const attachments = []
@@ -19,11 +23,32 @@ const sendMail = async (to, data, pdfBuffer) => {
       attachments
     })
 
-    console.log("MAIL SENT")
+    console.log("ORDER MAIL SENT")
     return true
 
   } catch (err) {
-    console.log("MAIL ERROR:", err.response?.body || err.message)
+    console.log("ORDER MAIL ERROR:", err.response?.body || err.message)
     return false
   }
 }
+
+
+const sendStatusMail = async (to, data) => {
+  try {
+    await sgMail.send({
+      to,
+      from: process.env.EMAIL_USER,
+      templateId: "d-c996ab8a0d444e009520216c6acac6ea", 
+      dynamic_template_data: data
+    })
+
+    console.log("STATUS MAIL SENT")
+    return true
+
+  } catch (err) {
+    console.log("STATUS MAIL ERROR:", err.response?.body || err.message)
+    return false
+  }
+}
+
+module.exports = { sendMail, sendStatusMail }

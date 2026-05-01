@@ -10,7 +10,7 @@ const cloudinary = require("cloudinary").v2
 const path = require("path")
 const Razorpay = require("razorpay")
 const app = express()
-const sendMail=require("./utils/mailer")
+const { sendMail, sendStatusMail } = require("./utils/mailer")
 const generatePDF = require("./utils/pdf")
 const invoiceHTML = require("./utils/invoiceHTML")
 app.use(express.json())
@@ -297,7 +297,9 @@ app.post("/order/place", async (req, res) => {
         if (!req.session.user){ 
             return res.json("Please login first")
         }
-
+        if (!req.session.user) {
+            return res.json("Please login first")
+         }
         const userId = req.session.user.id
         let detailedProducts = []
 
@@ -438,13 +440,12 @@ app.put("/admin/orders/:id", async (req, res) => {
             { returnDocument: 'after'  }
         )
         if (updated.email) {
-        await sendMail(updated.email,
-            "Your eBay Order Status",
-            `<h2>Order Placed Successfully</h2>
-            <p>Hello ${updated.customerName},</p>
-            <p>Your status has been updated.</p>
-            <p><b>Total:</b> US$${updated.totalAmount}</p>
-            <p>Status: ${updated.orderStatus} </p>`)
+            await sendStatusMail(updated.email, {
+            name: updated.customerName,
+            orderId: updated._id,
+            status: updated.orderStatus,
+            total: updated.totalAmount.toFixed(2)
+            })
         res.json(updated)
         }
     }catch(err){
