@@ -57,9 +57,9 @@ const invoiceHTML = (order) => {
 
       <div style="line-height:1.2; font-size:12px; font-family:arial; text-align:right;">
         <p>Shipping: US $${order.shippingAmount?.toFixed(2)}</p>
-        <h4>Total: US $${order.totalAmount}</h4>
-        <p>Subtotal: $${order.totalAmount - order.gstAmount - order.shippingAmount}</p>
-        <p>GST: $${order.gstAmount}</p>
+        <h4>Total: US $${order.totalAmount.toFixed(2)}</h4>
+        <p>Subtotal: $${(order.totalAmount - order.gstAmount - order.shippingAmount).toFixed(2)}</p>
+        <p>GST: $${order.gstAmount.toFixed(2)}</p>
       </div>
 
     </div>
