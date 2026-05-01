@@ -369,6 +369,7 @@ app.post("/order/place", async (req, res) => {
         const invoiceTemplate = invoiceHTML(savedOrder)
         const pdfBuffer = await generatePDF(invoiceTemplate)
         console.log("PDF BUFFER:", pdfBuffer ? "OK" : "FAILED")
+        console.log("EMAIL DATA:", data)
         await sendMail(
             savedOrder.email,
             {
@@ -382,7 +383,7 @@ app.post("/order/place", async (req, res) => {
                 ProductName: p.ProductName,
                 quantity: p.quantity,
                 itemTotal: (p.Price * p.quantity).toFixed(2),
-                image: p.image
+                image: p.image.replace("/upload/", "/upload/f_jpg/")
                 })),
                 totalprices: (
                 savedOrder.totalAmount -
