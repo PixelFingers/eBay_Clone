@@ -369,7 +369,6 @@ app.post("/order/place", async (req, res) => {
         const invoiceTemplate = invoiceHTML(savedOrder)
         const pdfBuffer = await generatePDF(invoiceTemplate)
         console.log("PDF BUFFER:", pdfBuffer ? "OK" : "FAILED")
-        console.log("EMAIL DATA:", data)
         await sendMail(
             savedOrder.email,
             {
@@ -378,7 +377,6 @@ app.post("/order/place", async (req, res) => {
                 name: savedOrder.customerName,
                 email: savedOrder.email,
                 address: savedOrder.address,
-
                 products: savedOrder.products.map(p => ({
                 ProductName: p.ProductName,
                 quantity: p.quantity,
