@@ -15,12 +15,12 @@ const invoiceHTML = (order) => {
 
     <hr style="border-color:#2f8deb">
 
-    <div style="font-size:12px; font-family:sans-serif;">
-      <p>Order ID: ${order._id}</p>
-      <p>Name: ${order.customerName}</p>
-      <p>Email: ${order.email}</p>
-      <p>Address: ${order.address}</p>
-      <p>Supplier: eBay Products</p>
+    <div style="font-size:12px; background:#f4f8fd; border-radius:6px; padding:10px 14px; margin-bottom:14px;">
+      <p style="margin:4px 0;"><span style="color:#888;">Order ID:</span> <strong>${order._id}</strong></p>
+      <p style="margin:4px 0;"><span style="color:#888;">Name:</span> ${order.customerName}</p>
+      <p style="margin:4px 0;"><span style="color:#888;">Email:</span> ${order.email}</p>
+      <p style="margin:4px 0;"><span style="color:#888;">Address:</span> ${order.address}</p>
+      <p style="margin:4px 0;"><span style="color:#888;">Supplier:</span> eBay Products</p>
     </div>
 
     <table width="100%" style="text-align:left; font-size:10px; border-collapse:collapse; border-top:2px solid #2f8deb; border-bottom:2px solid #2f8deb;">
@@ -55,11 +55,11 @@ const invoiceHTML = (order) => {
         <img src="https://res.cloudinary.com/dbkylvk3h/image/upload/v1777093258/pngegg_6_fglpai.png" width="100"/>
       </div>
 
-      <div style="line-height:1.2; font-size:12px; font-family:arial; text-align:right;">
-        <p>Shipping: US $${order.shippingAmount?.toFixed(2)}</p>
-        <h4>Total: US $${order.totalAmount.toFixed(2)}</h4>
-        <p>Subtotal: $${(order.totalAmount - order.gstAmount - order.shippingAmount).toFixed(2)}</p>
-        <p>GST: $${order.gstAmount.toFixed(2)}</p>
+      <div style="line-height:1.8; font-size:12px; font-family:arial; text-align:right; background:#f4f8fd; border-radius:6px; padding:10px 16px;">
+        <p style="margin:0; color:#555;">Shipping: US $${order.shippingAmount?.toFixed(2)}</p>
+        <p style="margin:0; color:#555;">Subtotal: $${(order.totalAmount - order.gstAmount - order.shippingAmount).toFixed(2)}</p>
+        <p style="margin:0; color:#555;">GST: $${order.gstAmount.toFixed(2)}</p>
+        <p style="margin:4px 0 0; font-size:15px; font-weight:bold; color:#2f8deb;">Total: US $${order.totalAmount.toFixed(2)}</p>
       </div>
 
     </div>

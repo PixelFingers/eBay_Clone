@@ -369,6 +369,9 @@ app.post("/order/place", async (req, res) => {
         const invoiceTemplate = invoiceHTML(savedOrder)
         const pdfBuffer = await generatePDF(invoiceTemplate)
         console.log("PDF BUFFER:", pdfBuffer ? "OK" : "FAILED")
+        if (!pdfBuffer) {
+            console.log("PDF failed, sending mail without attachment")
+        }
         await sendMail(
             savedOrder.email,
             {
@@ -383,11 +386,7 @@ app.post("/order/place", async (req, res) => {
                 itemTotal: (p.Price * p.quantity).toFixed(2),
                 image: p.image || ""
                 })),
-                totalprices: (
-                savedOrder.totalAmount -
-                savedOrder.gstAmount -
-                savedOrder.shippingAmount
-                ).toFixed(2),
+                totalprices: ( savedOrder.totalAmount - savedOrder.gstAmount - savedOrder.shippingAmount).toFixed(2),
                 gst: savedOrder.gstAmount.toFixed(2),
                 shipping: savedOrder.shippingAmount.toFixed(2),
                 total: savedOrder.totalAmount.toFixed(2)
@@ -438,15 +437,15 @@ app.put("/admin/orders/:id", async (req, res) => {
             { orderStatus: req.body.status },
             { returnDocument: 'after'  }
         )
-        if (updated.email) {
-            await sendStatusMail(updated.email, {
+        if (updated?.email) {
+        await sendStatusMail(updated.email, {
             name: updated.customerName,
             orderId: updated._id,
             status: updated.orderStatus,
             total: updated.totalAmount.toFixed(2)
             })
-        res.json(updated)
         }
+        res.json(updated)
     }catch(err){
         console.log(err)
         res.json("Error updating order")
@@ -456,24 +455,23 @@ app.put("/orders/cancel/:id", async (req, res) => {
     try {
         const order = await orderModel.findById(req.params.id)
         if (!order || order.userId !== req.session.user.id) {
-        return res.json("Not authorized")
+            return res.json("Not authorized")
         }
         const updated1 = await orderModel.findByIdAndUpdate(
             req.params.id,
             { orderStatus: "Cancelled" },
-            { new: true  }
+            { new: true }
         )
         if (updated1.email) {
-        await sendMail(updated1.email,
-            "eBay Order Cancellation",
-            `<h2>Your Order has been Cancelled Successfully</h2>
-            <p>Hello ${updated1.customerName},</p>
-            <p>Your order cancellation has been done successfuly.</p>
-            <p> We regret that you did not want this purchase. However we look forward to more from you.</p>
-            <p>Status: ${updated1.orderStatus} </p>`)
-        res.json(updated1)
+            await sendStatusMail(updated1.email, {
+                name: updated1.customerName,
+                orderId: updated1._id,
+                status: "Cancelled",
+                total: updated1.totalAmount.toFixed(2)
+            })
         }
-    }catch(err){
+        res.json(updated1)
+    } catch (err) {
         console.log(err)
         res.json("Error updating order")
     }
