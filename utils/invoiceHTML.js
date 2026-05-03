@@ -52,7 +52,7 @@ const invoiceHTML = (order) => {
         <p style="font-family:sans-serif; font-weight:bold; font-size:12px; color:#2f8deb;">
           Authorized Signatory
         </p>
-        <img src="https://res.cloudinary.com/dbkylvk3h/image/upload/v1777093258/pngegg_6_fglpai.png" width="100"/>
+        <img src="https://res.cloudinary.com/dbkylvk3h/image/upload/v1777810939/20260503_175032_axbtj5.png" width="100"/>
       </div>
 
       <div style="line-height:1.8; font-size:12px; font-family:arial; text-align:right; background:#f4f8fd; border-radius:6px; padding:10px 16px;">
