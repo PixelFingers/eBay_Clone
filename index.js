@@ -598,6 +598,19 @@ app.post("/contact", async (req, res) => {
     res.status(500).json({ error: "Server error" })
   }
 })
+app.get("/admin/messages", async (req, res) => {
+  try {
+    const messages = await Contact.find().sort({ createdAt: -1 })
+    res.json(messages)
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: "Server error" })
+  }
+})
+app.delete("/admin/messages/:id", async (req, res) => {
+  await Contact.findByIdAndDelete(req.params.id)
+  res.json({ success: true })
+})
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log("Server Running...")
