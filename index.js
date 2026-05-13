@@ -10,6 +10,7 @@ const cloudinary = require("cloudinary").v2
 const path = require("path")
 const Razorpay = require("razorpay")
 const app = express()
+const Contact = require("./models/contact")
 const { sendMail, sendStatusMail } = require("./utils/mailer")
 const generatePDF = require("./utils/pdf")
 const invoiceHTML = require("./utils/invoiceHTML")
@@ -134,6 +135,7 @@ app.post("/admin/addproduct", upload.array("images",10), async (req,res)=>{
         console.log(err)
         res.json("Error uploading product")
     }})
+    
 app.use("/uploads", express.static("uploads"))
 app.delete("/admin/deleteProduct/:id", async(req,res) => {
     try {
@@ -579,6 +581,21 @@ app.get("/admin/overview", async (req, res) => {
   } catch (err) {
     console.log(err)
     res.json("Error")
+  }
+})
+app.post("/contact", async (req, res) => {
+  try {
+    const { name, email, message } = req.body
+    const newMessage = new Contact({
+      name,
+      email,
+      message
+    })
+    await newMessage.save()
+    res.json({ success: true })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: "Server error" })
   }
 })
 const PORT = process.env.PORT || 3001
